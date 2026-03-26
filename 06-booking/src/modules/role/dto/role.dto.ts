@@ -1,0 +1,40 @@
+import { IsString, IsOptional, IsBoolean, IsArray, IsUUID } from 'class-validator';
+import { PaginationQueryDto } from '../../../common/dto/pagination.dto';
+
+export class CreateRoleDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  displayName: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isDefault?: boolean;
+}
+
+export class UpdateRoleDto {
+  @IsOptional()
+  @IsString()
+  displayName?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isDefault?: boolean;
+}
+
+export class AssignPermissionsDto {
+  @IsArray()
+  @IsUUID('all', { each: true })
+  permissionIds: string[];
+}
+
+export class RoleQueryDto extends PaginationQueryDto {}

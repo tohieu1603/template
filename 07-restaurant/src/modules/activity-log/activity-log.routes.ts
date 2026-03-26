@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { listLogs } from './activity-log.controller';
+import { validateDto } from '../../common/middleware/validate.middleware';
+import { auth } from '../../common/middleware/auth.middleware';
+import { rbac } from '../../common/middleware/rbac.middleware';
+import { ActivityLogQueryDto } from './dto/activity-log.dto';
+
+const router = Router();
+
+router.get('/', auth(), rbac('activity_logs.view'), validateDto(ActivityLogQueryDto, 'query'), listLogs);
+
+export default router;

@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+logs
+uploads
+*.log
+.git
+tests
+jest.config.ts
+tsconfig.test.json

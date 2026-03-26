@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: duc
+      POSTGRES_PASSWORD: "080103"
+      POSTGRES_DB: blogs
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U duc -d blogs"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: blog-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      API_PREFIX: /api/v1
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: blogs
+      DB_USER: duc
+      DB_PASSWORD: "080103"
+      DB_SSL: "false"
+      DB_SYNC: "true"
+      DB_LOGGING: "false"
+      JWT_ACCESS_SECRET: blog_access_secret_key_2026_change_in_prod
+      JWT_REFRESH_SECRET: blog_refresh_secret_key_2026_change_in_prod
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://localhost:3001,http://localhost:5173
+      RATE_LIMIT_WINDOW_MS: "900000"
+      RATE_LIMIT_MAX: "100"
+      UPLOAD_DIR: uploads
+      MAX_FILE_SIZE: "5242880"
+      LOG_LEVEL: info
+      LOG_DIR: logs
+      SEED_ADMIN_EMAIL: admin@example.com
+      SEED_ADMIN_PASSWORD: Admin@123
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+
+volumes:
+  pgdata:
+  uploads:
+  logs:
